@@ -1,0 +1,148 @@
+@model AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Админ-панель";
+}
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">УПРАВЛЕНИЕ САЙТОМ</span>
+        <h1>Админ-панель</h1>
+        <p>Заявки, отзывы и содержание сайта.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="stats-grid">
+            <div>
+                <strong>@Model.RequestsCount</strong>
+                <span>Всего заявок</span>
+            </div>
+            <div>
+                <strong>@Model.NewRequestsCount</strong>
+                <span>Новые заявки</span>
+            </div>
+            <div>
+                <strong>@Model.UsersCount</strong>
+                <span>Пользователей</span>
+            </div>
+            <div>
+                <strong>@Model.ReviewsCount</strong>
+                <span>Отзывов</span>
+            </div>
+        </div>
+
+        @if (ViewBag.IsAdmin == true)
+        {
+            <div class="admin-links">
+                <a asp-action="Services">Управление услугами ↗</a>
+                <a asp-action="Portfolio">Управление портфолио ↗</a>
+                <a asp-action="Promotions">Управление акциями ↗</a>
+                <a asp-action="Users">Пользователи и роли ↗</a>
+            </div>
+        }
+
+        <h2 class="admin-heading">Заявки на ремонт</h2>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Клиент</th>
+                        <th>Услуга</th>
+                        <th>Контакты</th>
+                        <th>Дата</th>
+                        <th>Статус</th>
+                        <th>Изменить</th>
+                        @if (ViewBag.IsAdmin == true)
+                        {
+                            <th>Удалить</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Requests)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>
+                                @(item.Service?.Title ?? "Не выбрана")
+                                <br />
+                                <small>@item.Description</small>
+                            </td>
+                            <td>
+                                @item.Phone
+                                <br />
+                                <small>@item.Email</small>
+                            </td>
+                            <td>@item.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</td>
+                            <td>@item.Status</td>
+                            <td>
+                                <form asp-action="UpdateRequestStatus" method="post" class="inline-form">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <select name="status">
+                                        <option value="Новая" selected="@(item.Status == "Новая" ? "selected" : null)">Новая</option>
+                                        <option value="В работе" selected="@(item.Status == "В работе" ? "selected" : null)">В работе</option>
+                                        <option value="Завершена" selected="@(item.Status == "Завершена" ? "selected" : null)">Завершена</option>
+                                        <option value="Отменена" selected="@(item.Status == "Отменена" ? "selected" : null)">Отменена</option>
+                                    </select>
+                                    <button class="small-button" type="submit">OK</button>
+                                </form>
+                            </td>
+                            @if (ViewBag.IsAdmin == true)
+                            {
+                                <td>
+                                    <form
+                                        asp-action="DeleteRequest"
+                                        method="post"
+                                        onsubmit="return confirm('Полностью удалить эту заявку? Это действие нельзя отменить.');">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button class="small-button" type="submit">Удалить</button>
+                                    </form>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <h2 class="admin-heading">Отзывы</h2>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Автор</th>
+                        <th>Отзыв</th>
+                        <th>Оценка</th>
+                        @if (ViewBag.IsAdmin == true)
+                        {
+                            <th>Действие</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Reviews)
+                    {
+                        <tr>
+                            <td>@item.Author</td>
+                            <td>@item.Text</td>
+                            <td>@item.Rating / 5</td>
+                            @if (ViewBag.IsAdmin == true)
+                            {
+                                <td>
+                                    <form asp-action="DeleteReview" method="post" onsubmit="return confirm('Удалить этот отзыв?');">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button class="small-button" type="submit">Удалить</button>
+                                    </form>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

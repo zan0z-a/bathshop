@@ -1,0 +1,47 @@
+@model IEnumerable<Promotion>
+
+@{
+    ViewData["Title"] = "Управление акциями";
+}
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">АДМИН-ПАНЕЛЬ</span>
+        <h1>Акции</h1>
+        <p><a asp-action="Index">← Вернуться в админ-панель</a></p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container admin-manage">
+        <h2>Добавить акцию</h2>
+
+        <form asp-action="SavePromotion" method="post" class="manage-form">
+            <input type="hidden" name="Id" value="0" />
+            <input name="Title" placeholder="Название акции" required />
+            <textarea name="Description" placeholder="Описание акции" required></textarea>
+            <input name="ExpirationText" placeholder="Срок действия" />
+            <button class="button button-dark" type="submit">Добавить</button>
+        </form>
+
+        <h2>Акции на сайте</h2>
+
+        @foreach (var item in Model)
+        {
+            <div class="manage-item">
+                <form asp-action="SavePromotion" method="post" class="manage-form">
+                    <input type="hidden" name="Id" value="@item.Id" />
+                    <input name="Title" value="@item.Title" required />
+                    <textarea name="Description" required>@item.Description</textarea>
+                    <input name="ExpirationText" value="@item.ExpirationText" />
+                    <button class="small-button" type="submit">Сохранить</button>
+                </form>
+
+                <form asp-action="DeletePromotion" method="post">
+                    <input type="hidden" name="id" value="@item.Id" />
+                    <button class="text-button danger" type="submit">Удалить</button>
+                </form>
+            </div>
+        }
+    </div>
+</section>

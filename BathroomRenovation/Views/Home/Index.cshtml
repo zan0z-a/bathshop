@@ -1,0 +1,160 @@
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Ремонт и реставрация ванных комнат";
+}
+<section class="hero">
+    <div class="container hero-content">
+        <span class="eyebrow light-eyebrow" data-hero-eyebrow>РЕМОНТ И РЕСТАВРАЦИЯ ВАННЫХ</span>
+        <h1 data-hero-title>Ванная, в которую<br />приятно возвращаться</h1>
+        <p data-hero-text>Обновим вашу ванную комнату — от реставрации покрытия до ремонта под ключ.</p>
+        <div class="hero-actions">
+            <a class="button button-light" asp-controller="RepairRequests" asp-action="Create">Оставить заявку</a>
+            <a class="text-link light-link" asp-controller="Portfolio" asp-action="Index">Смотреть работы <span>↗</span></a>
+        </div>
+        <div class="hero-bottom">
+            <div class="hero-note">
+                <strong>10+</strong>
+                <span>лет опыта в ремонте<br />и обновлении ванных</span>
+            </div>
+            <div class="hero-controls">
+                <button type="button" data-hero-prev aria-label="Предыдущий слайд">‹</button>
+                <div class="hero-dots">
+                    <button type="button" class="active" data-hero-dot="0" aria-label="Слайд 1"></button>
+                    <button type="button" data-hero-dot="1" aria-label="Слайд 2"></button>
+                    <button type="button" data-hero-dot="2" aria-label="Слайд 3"></button>
+                </div>
+                <button type="button" data-hero-next aria-label="Следующий слайд">›</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section intro-section">
+    <div class="container intro-grid">
+        <div>
+            <span class="eyebrow">О КОМПАНИИ</span>
+            <h2>Делаем ремонт понятным<br />на каждом этапе</h2>
+        </div>
+        <div class="intro-copy">
+            <p>
+                Помогаем обновить ванную комнату без лишней суеты. Обсуждаем задачу,
+                составляем план работ и заранее объясняем стоимость.
+            </p>
+            <a class="text-link" asp-controller="Home" asp-action="About">Подробнее о компании <span>↗</span></a>
+        </div>
+    </div>
+</section>
+
+<section class="section section-soft">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">ЧТО МЫ ДЕЛАЕМ</span>
+                <h2>Наши услуги</h2>
+            </div>
+            <a class="text-link" asp-controller="Services" asp-action="Index">Все услуги <span>↗</span></a>
+        </div>
+        <div class="service-grid">
+            @foreach (var item in Model.Services)
+            {
+                <article class="service-card">
+                    <span class="card-number">@(item.Id.ToString("00"))</span>
+                    <h3>@item.Title</h3>
+                    <p>@item.ShortDescription</p>
+                    <a asp-controller="Services" asp-action="Details" asp-route-id="@item.Id" class="text-link">Подробнее <span>↗</span></a>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">НАШИ ПРОЕКТЫ</span>
+                <h2>Работы, которыми гордимся</h2>
+            </div>
+            <a class="text-link" asp-controller="Portfolio" asp-action="Index">Все проекты <span>↗</span></a>
+        </div>
+        <div class="portfolio-grid">
+            @foreach (var item in Model.Portfolio)
+            {
+                <article class="portfolio-card">
+                    <img src="@item.ImageUrl" alt="@item.Title" loading="lazy" />
+                    <div>
+                        <span class="muted">@item.Year</span>
+                        <h3>@item.Title</h3>
+                        <p>@item.Description</p>
+                    </div>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+@if (Model.Promotions.Any())
+{
+    <section class="section promotion-section">
+        <div class="container">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow light-eyebrow">ВЫГОДНЫЕ ПРЕДЛОЖЕНИЯ</span>
+                    <h2>Актуальные акции</h2>
+                </div>
+                <a class="text-link light-link" asp-controller="Promotions" asp-action="Index">
+                    Все акции <span>↗</span>
+                </a>
+            </div>
+            <div class="promotion-grid">
+                @foreach (var item in Model.Promotions)
+                {
+                    <article class="promotion-card">
+                        <span class="promotion-mark">%</span>
+                        <h3>@item.Title</h3>
+                        <p>@item.Description</p>
+                        <span class="promotion-date">@item.ExpirationText</span>
+                    </article>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<section class="section section-soft">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">ОТЗЫВЫ</span>
+                <h2>Что говорят клиенты</h2>
+            </div>
+            <a class="text-link" asp-controller="Reviews" asp-action="Index">
+                Все отзывы <span>↗</span>
+            </a>
+        </div>
+        <div class="review-grid">
+            @foreach (var item in Model.Reviews)
+            {
+                <article class="review-card">
+                    <div class="stars">@("★".Repeat(item.Rating))</div>
+                    <p>“@item.Text”</p>
+                    <strong>@item.Author</strong>
+                </article>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section contact-banner">
+    <div class="container contact-banner-inner">
+        <div>
+            <span class="eyebrow light-eyebrow">ОБСУДИМ ВАШ ПРОЕКТ</span>
+            <h2>Пора обновить ванную?</h2>
+            <p>
+                Расскажите, что хотите изменить. Мы свяжемся с вами и подскажем,
+                с чего начать.
+            </p>
+        </div>
+        <a class="button button-light" asp-controller="RepairRequests" asp-action="Create">Оставить заявку</a>
+    </div>
+</section>

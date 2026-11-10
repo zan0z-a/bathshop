@@ -1,0 +1,44 @@
+@{
+    ViewData["Title"] = "Контакты";
+}
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">КОНТАКТЫ</span>
+        <h1>Будем на связи</h1>
+        <p>Ответим на вопросы и поможем спланировать ремонт.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container contacts-layout">
+        <div class="contact-details">
+            <div>
+                <span class="eyebrow">ТЕЛЕФОН</span>
+                <h2><a href="tel:+79000000000">+7 (900) 000-00-00</a></h2>
+            </div>
+            <div>
+                <span class="eyebrow">ПОЧТА</span>
+                <h2><a href="mailto:hello@vannaya-prosto.ru">hello@vannaya-prosto.ru</a></h2>
+            </div>
+            <div>
+                <span class="eyebrow">АДРЕС</span>
+                <h2>Москва, адрес уточняется</h2>
+                <p>Точный адрес офиса будет добавлен после запуска сайта.</p>
+            </div>
+            <a class="button button-dark" asp-controller="RepairRequests" asp-action="Create">Оставить заявку</a>
+        </div>
+
+        <div class="map-placeholder">
+            <iframe
+                title="Карта проезда"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=37.60%2C55.74%2C37.66%2C55.77&amp;layer=mapnik">
+            </iframe>
+            <div class="map-label">
+                <strong>Ванная Просто</strong>
+                <span>Показана примерная область. Укажите точный адрес офиса перед публикацией сайта.</span>
+                <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener">Открыть карту</a>
+            </div>
+        </div>
+    </div>
+</section>

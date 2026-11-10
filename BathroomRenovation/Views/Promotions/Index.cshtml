@@ -1,0 +1,30 @@
+@model IEnumerable<Promotion>
+
+@{
+    ViewData["Title"] = "Акции";
+}
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">АКЦИИ</span>
+        <h1>Специальные предложения</h1>
+        <p>Возможность обновить ванную на выгодных условиях.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container promotion-page-grid">
+        @foreach (var item in Model)
+        {
+            <article class="promotion-card promotion-light">
+                <span class="promotion-mark">%</span>
+                <h2>@item.Title</h2>
+                <p>@item.Description</p>
+                <span class="promotion-date">@item.ExpirationText</span>
+                <a class="text-link" asp-controller="RepairRequests" asp-action="Create">
+                    Воспользоваться предложением <span>↗</span>
+                </a>
+            </article>
+        }
+    </div>
+</section>

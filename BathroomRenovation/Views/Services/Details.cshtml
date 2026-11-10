@@ -1,0 +1,30 @@
+@model Service
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">НАШИ УСЛУГИ</span>
+        <h1>@Model.Title</h1>
+        <p>@Model.ShortDescription</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container detail-layout">
+        <div>
+            <h2>Что входит в услугу</h2>
+            <p>@Model.Description</p>
+            <p class="price-line">Стоимость — от @Model.PriceFrom.ToString("N0") ₽</p>
+        </div>
+        <aside class="detail-aside">
+            <h3>Обсудим вашу задачу?</h3>
+            <p>Оставьте заявку, чтобы уточнить детали и стоимость.</p>
+            <a class="button button-dark" asp-controller="RepairRequests" asp-action="Create" asp-route-serviceId="@Model.Id">
+                Оставить заявку
+            </a>
+        </aside>
+    </div>
+</section>

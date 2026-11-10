@@ -1,0 +1,44 @@
+@model IEnumerable<Service>
+
+@{
+    ViewData["Title"] = "Услуги";
+}
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">УСЛУГИ</span>
+        <h1>Всё для обновления<br />вашей ванной</h1>
+        <p>Выберите нужную услугу или оставьте заявку — поможем определить объём работ.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container service-list">
+        @foreach (var item in Model)
+        {
+            <article class="service-row">
+                <div>
+                    <span class="card-number">@item.Id.ToString("00")</span>
+                    <h2>@item.Title</h2>
+                    <p>@item.ShortDescription</p>
+                </div>
+                <div class="service-row-side">
+                    <strong>от @item.PriceFrom.ToString("N0") ₽</strong>
+                    <a class="text-link" asp-action="Details" asp-route-id="@item.Id">
+                        Подробнее <span>↗</span>
+                    </a>
+                </div>
+            </article>
+        }
+    </div>
+</section>
+
+<section class="section section-soft">
+    <div class="container small-cta">
+        <div>
+            <h2>Не нашли нужную услугу?</h2>
+            <p>Опишите задачу, и мы предложим подходящий вариант.</p>
+        </div>
+        <a class="button button-dark" asp-controller="RepairRequests" asp-action="Create">Оставить заявку</a>
+    </div>
+</section>

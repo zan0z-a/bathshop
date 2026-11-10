@@ -1,0 +1,79 @@
+@model CabinetViewModel
+
+@{
+    ViewData["Title"] = "Личный кабинет";
+}
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">ЛИЧНЫЙ КАБИНЕТ</span>
+        <h1>Здравствуйте, @Model.User.FullName</h1>
+        <p>Здесь можно обновить контакты и посмотреть историю заявок.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container cabinet-grid">
+        <div class="form-card">
+            <h2>Мой профиль</h2>
+
+            @if (TempData["Message"] != null)
+            {
+                <p class="notice">@TempData["Message"]</p>
+            }
+
+            <form asp-action="UpdateProfile" method="post">
+                <div class="form-field">
+                    <label>Имя</label>
+                    <input name="fullName" value="@Model.User.FullName" maxlength="100" required />
+                </div>
+
+                <div class="form-field">
+                    <label>Email</label>
+                    <input value="@Model.User.Email" disabled />
+                </div>
+
+                <div class="form-field">
+                    <label>Телефон</label>
+                    <input name="phone" value="@Model.User.PhoneNumber" maxlength="30" />
+                </div>
+
+                <button class="button button-dark" type="submit">Сохранить</button>
+            </form>
+
+            <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form">
+                <button class="text-button" type="submit">Выйти из аккаунта</button>
+            </form>
+        </div>
+
+        <div>
+            <h2>Мои заявки</h2>
+
+            @if (!Model.Requests.Any())
+            {
+                <div class="empty-state">
+                    <p>У вас пока нет заявок.</p>
+                    <a class="text-link" asp-controller="RepairRequests" asp-action="Create">
+                        Оставить первую заявку <span>↗</span>
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="request-list">
+                    @foreach (var item in Model.Requests)
+                    {
+                        <article class="request-card">
+                            <div>
+                                <span class="muted">Заявка №@item.Id · @item.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</span>
+                                <h3>@(item.Service?.Title ?? "Консультация")</h3>
+                                <p>@item.Description</p>
+                            </div>
+                            <span class="status-pill">@item.Status</span>
+                        </article>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</section>

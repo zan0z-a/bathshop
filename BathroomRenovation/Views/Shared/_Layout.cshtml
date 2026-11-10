@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — Bath store</title>
+    <meta name="description" content="Ремонт и реставрация ванных комнат. Услуги, портфолио и заявка на ремонт." />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" asp-controller="Home" asp-action="Index">
+                <img src="~/images/logo.svg" alt="" />
+                <span>Bath<span class="brand-light">Store</span></span>
+            </a>
+            <button class="menu-toggle" type="button" aria-label="Открыть меню" onclick="document.querySelector('.main-nav').classList.toggle('open')">☰</button>
+            <nav class="main-nav">
+                <a asp-controller="Home" asp-action="About">О компании</a>
+                <a asp-controller="Services" asp-action="Index">Услуги</a>
+                <a asp-controller="Portfolio" asp-action="Index">Портфолио</a>
+                <a asp-controller="Promotions" asp-action="Index">Акции</a>
+                <a asp-controller="Reviews" asp-action="Index">Отзывы</a>
+                <a asp-controller="Contacts" asp-action="Index">Контакты</a>
+                <a asp-controller="RepairRequests" asp-action="Create" class="nav-cta">Заявка на ремонт</a>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-controller="Cabinet" asp-action="Index">Личный кабинет</a>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                    {
+                        <a asp-controller="Admin" asp-action="Index">Админ</a>
+                    }
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login">Войти</a>
+                }
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div>
+                <h3>Разделы</h3>
+                <a asp-controller="Home" asp-action="About">О компании</a>
+                <a asp-controller="Services" asp-action="Index">Услуги</a>
+                <a asp-controller="Portfolio" asp-action="Index">Портфолио</a>
+                <a asp-controller="Reviews" asp-action="Index">Отзывы</a>
+            </div>
+            <div>
+                <h3>Контакты</h3>
+                <a href="tel:+79000000000">+7 (900) 000-00-00</a>
+                <a href="">bathstore@gmail.com</a>
+                <span>Ижевск</span>
+            </div>
+            <div>
+                <h3>Информация</h3>
+                <a href="https://vk.com" target="_blank" rel="noopener">ВКонтакте</a>
+                <a href="https://t.me" target="_blank" rel="noopener">Telegram</a>
+            </div>
+        </div>
+    </footer>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

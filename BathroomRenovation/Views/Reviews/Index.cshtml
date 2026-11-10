@@ -1,0 +1,68 @@
+@model IEnumerable<Review>
+
+@{
+    ViewData["Title"] = "Отзывы";
+}
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">ОТЗЫВЫ</span>
+        <h1>Мнение наших клиентов</h1>
+        <p>Нам важно, чтобы результат радовал вас каждый день.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        @if (TempData["Message"] != null)
+        {
+            <p class="notice">@TempData["Message"]</p>
+        }
+
+        <div class="review-grid review-page-grid">
+            @foreach (var item in Model)
+            {
+                <article class="review-card">
+                    <div class="stars">@("★".Repeat(item.Rating))</div>
+                    <p>“@item.Text”</p>
+                    <strong>@item.Author</strong>
+                </article>
+            }
+        </div>
+
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <div class="form-card review-form">
+                <h2>Оставить отзыв</h2>
+                <p>Поделитесь своим мнением о нашей работе.</p>
+
+                <form asp-action="Create" method="post">
+                    <div class="form-field">
+                        <label for="text">Ваш отзыв</label>
+                        <textarea id="text" name="text" rows="4" maxlength="1000" required></textarea>
+                    </div>
+
+                    <div class="form-field">
+                        <label for="rating">Оценка</label>
+                        <select id="rating" name="rating">
+                            <option value="5">5 — отлично</option>
+                            <option value="4">4 — хорошо</option>
+                            <option value="3">3 — нормально</option>
+                            <option value="2">2 — плохо</option>
+                            <option value="1">1 — очень плохо</option>
+                        </select>
+                    </div>
+
+                    <button class="button button-dark" type="submit">Опубликовать отзыв</button>
+                </form>
+            </div>
+        }
+        else
+        {
+            <p class="login-note">
+                <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="/Reviews">Войдите</a>,
+                чтобы оставить отзыв.
+            </p>
+        }
+    </div>
+</section>

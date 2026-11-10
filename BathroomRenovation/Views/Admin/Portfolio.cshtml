@@ -1,0 +1,49 @@
+@model IEnumerable<PortfolioItem>
+
+@{
+    ViewData["Title"] = "Управление портфолио";
+}
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">АДМИН-ПАНЕЛЬ</span>
+        <h1>Портфолио</h1>
+        <p><a asp-action="Index">← Вернуться в админ-панель</a></p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container admin-manage">
+        <h2>Добавить проект</h2>
+
+        <form asp-action="SavePortfolioItem" method="post" class="manage-form">
+            <input type="hidden" name="Id" value="0" />
+            <input name="Title" placeholder="Название проекта" required />
+            <input name="Description" placeholder="Описание" required />
+            <input name="ImageUrl" type="url" placeholder="Ссылка на фотографию" required />
+            <input name="Year" type="number" min="2000" max="2100" value="2026" required />
+            <button class="button button-dark" type="submit">Добавить</button>
+        </form>
+
+        <h2>Проекты</h2>
+
+        @foreach (var item in Model)
+        {
+            <div class="manage-item">
+                <form asp-action="SavePortfolioItem" method="post" class="manage-form">
+                    <input type="hidden" name="Id" value="@item.Id" />
+                    <input name="Title" value="@item.Title" required />
+                    <input name="Description" value="@item.Description" required />
+                    <input name="ImageUrl" type="url" value="@item.ImageUrl" required />
+                    <input name="Year" type="number" value="@item.Year" min="2000" max="2100" required />
+                    <button class="small-button" type="submit">Сохранить</button>
+                </form>
+
+                <form asp-action="DeletePortfolioItem" method="post">
+                    <input type="hidden" name="id" value="@item.Id" />
+                    <button class="text-button danger" type="submit">Удалить</button>
+                </form>
+            </div>
+        }
+    </div>
+</section>

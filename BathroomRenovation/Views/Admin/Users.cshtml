@@ -1,0 +1,82 @@
+@model IEnumerable<AdminUserViewModel>
+
+@{
+    ViewData["Title"] = "Пользователи";
+}
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">АДМИН-ПАНЕЛЬ</span>
+        <h1>Пользователи и роли</h1>
+        <p><a asp-action="Index">← Вернуться в админ-панель</a></p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container admin-manage">
+        @if (TempData["Message"] != null)
+        {
+            <p class="notice">@TempData["Message"]</p>
+        }
+
+        <h2>Создать пользователя</h2>
+
+        <form asp-action="CreateUser" method="post" class="manage-form">
+            <input name="fullName" placeholder="Имя" required />
+            <input name="email" type="email" placeholder="Email" required />
+            <input name="password" type="password" minlength="8" placeholder="Пароль от 8 символов" required />
+            <select name="role">
+                <option value="User">Пользователь</option>
+                <option value="Manager">Менеджер</option>
+                <option value="Admin">Администратор</option>
+            </select>
+            <button class="button button-dark" type="submit">Создать</button>
+        </form>
+
+        <h2>Список пользователей</h2>
+
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Профиль</th>
+                        <th>Роль</th>
+                        <th>Удаление</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <form asp-action="EditUser" method="post" class="inline-form">
+                                    <input type="hidden" name="id" value="@item.User.Id" />
+                                    <input name="fullName" value="@item.User.FullName" required maxlength="100" />
+                                    <input name="email" type="email" value="@item.User.Email" required />
+                                    <button class="small-button" type="submit">Сохранить</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form asp-action="ChangeRole" method="post" class="inline-form">
+                                    <input type="hidden" name="id" value="@item.User.Id" />
+                                    <select name="role">
+                                        <option value="User" selected="@(item.Role == "User" ? "selected" : null)">Пользователь</option>
+                                        <option value="Manager" selected="@(item.Role == "Manager" ? "selected" : null)">Менеджер</option>
+                                        <option value="Admin" selected="@(item.Role == "Admin" ? "selected" : null)">Администратор</option>
+                                    </select>
+                                    <button class="small-button" type="submit">Сменить</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form asp-action="DeleteUser" method="post" onsubmit="return confirm('Удалить пользователя?')">
+                                    <input type="hidden" name="id" value="@item.User.Id" />
+                                    <button class="text-button danger" type="submit">Удалить</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
