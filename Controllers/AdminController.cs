@@ -13,11 +13,13 @@ public class AdminController : Controller
 {
     private readonly ApplicationDbContext _db;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IWebHostEnvironment _environment;
 
-    public AdminController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
+    public AdminController(ApplicationDbContext db, UserManager<ApplicationUser> userManager, IWebHostEnvironment environment)
     {
         _db = db;
         _userManager = userManager;
+        _environment = environment;
     }
 
     public async Task<IActionResult> Index()
@@ -128,25 +130,71 @@ public class AdminController : Controller
     [Authorize(Roles = "Admin")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SavePortfolioItem(PortfolioItem model)
+    public async Task<IActionResult> SavePortfolioItem(PortfolioItem model, IFormFile? imageFile)
     {
-        if (!ModelState.IsValid)
+        var existingItem = model.Id == 0 ? null : await _db.PortfolioItems.FindAsync(model.Id);
+        if (model.Id != 0 && existingItem == null)
+            return NotFound();
+
+        string? fileName = null;
+
+        if (imageFile != null && imageFile.Length > 0)
         {
-            TempData["Message"] = "Проверьте поля проекта и ссылку на фото.";
-            return RedirectToAction(nameof(Portfolio));
+            var extension = Path.GetExtension(imageFile.FileName).ToLowerInvariant();
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+            var allowedContentTypes = new[] { "image/jpeg", "image/png", "image/webp" };
+
+            if (imageFile.Length > 8 * 1024 * 1024 ||
+                !allowedExtensions.Contains(extension) ||
+                !allowedContentTypes.Contains(imageFile.ContentType))
+            {
+                TempData["Message"] = "Выберите изображение JPG, PNG или WEBP размером до 8 МБ.";
+                return RedirectToAction(nameof(Portfolio));
+            }
+
+            fileName = $"{Guid.NewGuid():N}{extension}";
+            model.ImageUrl = $"/images/portfolio/{fileName}";
         }
-        if (model.Id == 0)
-            _db.PortfolioItems.Add(model);
+        else if (existingItem != null)
+        {
+            model.ImageUrl = existingItem.ImageUrl;
+        }
         else
         {
-            var item = await _db.PortfolioItems.FindAsync(model.Id);
-            if (item == null)
-                return NotFound();
-            item.Title = model.Title;
-            item.Description = model.Description;
-            item.ImageUrl = model.ImageUrl;
-            item.Year = model.Year;
+            TempData["Message"] = "Для нового проекта необходимо выбрать фотографию.";
+            return RedirectToAction(nameof(Portfolio));
         }
+
+        ModelState.Remove(nameof(model.ImageUrl));
+        if (!TryValidateModel(model))
+        {
+            TempData["Message"] = "Проверьте название, описание и год проекта.";
+            return RedirectToAction(nameof(Portfolio));
+        }
+
+        if (imageFile != null && fileName != null)
+        {
+            var webRoot = _environment.WebRootPath ?? Path.Combine(_environment.ContentRootPath, "wwwroot");
+            var uploadFolder = Path.Combine(webRoot, "images", "portfolio");
+            Directory.CreateDirectory(uploadFolder);
+
+            var filePath = Path.Combine(uploadFolder, fileName);
+            await using var stream = new FileStream(filePath, FileMode.CreateNew);
+            await imageFile.CopyToAsync(stream);
+        }
+
+        if (existingItem == null)
+        {
+            _db.PortfolioItems.Add(model);
+        }
+        else
+        {
+            existingItem.Title = model.Title;
+            existingItem.Description = model.Description;
+            existingItem.ImageUrl = model.ImageUrl;
+            existingItem.Year = model.Year;
+        }
+
         await _db.SaveChangesAsync();
         return RedirectToAction(nameof(Portfolio));
     }

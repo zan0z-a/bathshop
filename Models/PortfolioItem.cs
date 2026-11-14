@@ -12,7 +12,7 @@ public class PortfolioItem
     [Required, StringLength(500)]
     public string Description { get; set; } = "";
 
-    [Required, Url, StringLength(500)]
+    [Required, StringLength(500)]
     public string ImageUrl { get; set; } = "";
 
     [Range(2000, 2100)]

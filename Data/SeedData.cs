@@ -64,21 +64,21 @@ public static class SeedData
                 {
                     Title = "Светлая ванная",
                     Description = "Обновление отделки и установка новой сантехники.",
-                    ImageUrl = "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=85",
+                    ImageUrl = "/images/portfolio-bathroom-1.svg",
                     Year = 2026
                 },
                 new PortfolioItem
                 {
                     Title = "Современная душевая",
                     Description = "Душевая зона со стеклянной перегородкой и новой плиткой.",
-                    ImageUrl = "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1000&q=85",
+                    ImageUrl = "/images/portfolio-bathroom-2.svg",
                     Year = 2025
                 },
                 new PortfolioItem
                 {
                     Title = "Ванная в спокойных тонах",
                     Description = "Реставрация и аккуратное обновление интерьера.",
-                    ImageUrl = "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1000&q=85",
+                    ImageUrl = "/images/portfolio-bathroom-3.svg",
                     Year = 2025
                 }
             );
@@ -120,6 +120,23 @@ public static class SeedData
                     IsPublished = true
                 }
             );
+        }
+
+        var existingPortfolio = await db.PortfolioItems.ToListAsync();
+        var remoteImageMap = new Dictionary<string, string>
+        {
+            ["https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=85"] = "/images/portfolio-bathroom-1.svg",
+            ["https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1000&q=85"] = "/images/portfolio-bathroom-2.svg",
+            ["https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1000&q=85"] = "/images/portfolio-bathroom-3.svg"
+        };
+
+        foreach (var item in existingPortfolio)
+        {
+            if (remoteImageMap.TryGetValue(item.ImageUrl, out var localImage))
+                item.ImageUrl = localImage;
+            else if (item.ImageUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                     item.ImageUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                item.ImageUrl = "/images/portfolio-bathroom-1.svg";
         }
 
         await db.SaveChangesAsync();
